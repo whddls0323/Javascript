@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>user5::list</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementsByTagName('table')[0];
+
+            fetch('http://localhost:8080/ch08/user5')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                for(const user of data) {
+                    const tr = `<tr>
+                                    <td>${user.no}</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.age}</td>
+                                    <td>${user.gender}</td>
+                                    <td>${user.regDate.substring(0,10)}</td>
+                                    <td>
+                                        <a href='./modify.html?no=${user.no}' class='modify'>수정</a>
+                                        <a href='delete' class='delete' data-no=${user.no}>삭제</a>
+                                    </td>
+                                </tr>`;
+                    table.insertAdjacentHTML('beforeEnd', tr);
+                }
+            });
+
+            document.addEventListener('click', async function(e) {
+                if(e.target.classList == 'delete') {
+                    e.preventDefault();
+
+                    const no = e.target.dataset.no;
+                    const response = await fetch(`http://localhost:8080/ch08/user5/${no}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+
+                    if(data) {
+                        alert('삭제 했습니다. ' + data);
+
+                        //삭제한 목록 동적 처리
+                        e.target.closest('tr').remove();
+                    }
+                }
+            });
+        }); 
+    </script>
+</head>
+<body>
+    <h3>User5 목록</h3>
+
+    <a href="./register.html">등록</a>
+
+    <table border="1">
+        <tr>
+            <th>아이디</th>
+            <th>이름</th>
+            <th>나이</th>
+            <th>성별</th>
+            <th>등록일</th>
+            <th>관리</th>
+        </tr>        
+    </table>
+</body>
+</html>

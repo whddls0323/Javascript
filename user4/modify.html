@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>user4::modify</title>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.formUser;
+
+            const url = location.href;
+            const parameter = url.split('?')[1];
+            const no = parameter.split('=')[1];
+
+            fetch(`http://localhost:8080/ch08/user4/${no}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                form.no.value = data.no;
+                form.name.value = data.name;
+                form.age.value = data.age;
+                form.address.value = data.address;
+            });
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const jsonData = {
+                    "no" : form.no.value,
+                    "name" : form.name.value,
+                    "age" : form.age.value,
+                    "address" : form.address.value
+                };
+
+                const response = await fetch('http://localhost:8080/ch08/user4', {
+                    method: 'PUT',
+                    headers: {'Content-Type' : 'application/json'},
+                    body: JSON.stringify(jsonData)
+                });
+
+                const data = await response.json();
+                console.log(data);
+
+                if(data) {
+                    alert('수정 했습니다.');
+                    location.href = './list.html';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h3>User4 수정</h3>
+
+    <form name="formUser">
+        <table border="1">
+            <tr>
+                <td>아이디</td>
+                <td><input type="text" name="no" readonly></td>
+            </tr>
+            <tr>
+                <td>이름</td>
+                <td><input type="text" name="name"></td>
+            </tr>
+            <tr>
+                <td>나이</td>
+                <td><input type="number" name="age"></td>
+            </tr>
+            <tr>
+                <td>주소</td>
+                <td><input type="text" name="address"></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right"><input type="submit" value="수정하기"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
